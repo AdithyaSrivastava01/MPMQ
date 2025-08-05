@@ -1,0 +1,42 @@
+# pyproject.toml  ─── project metadata & dependency list
+# Uses Hatchling as the build-backend (lightweight, no config files needed).
+
+[build-system]
+requires      = ["hatchling>=1.22"]   # hatch build engine
+build-backend = "hatchling.build"
+
+[project]
+name            = "mpmq"
+version         = "0.1.0"
+description     = "Modern Python Message Queue – async gRPC broker with Prometheus metrics"
+authors         = [{ name = "Adithya Srivastava", email = "adithyasrivastava01@gmail.com" }]
+readme          = "README_mpmq.md"
+license         = { text = "MIT" }
+requires-python = ">=3.11"
+
+# ───────── runtime dependencies ─────────
+dependencies = [
+  "grpcio>=1.63",
+  "protobuf>=4.25",
+  "prometheus-client>=0.20",
+  "aiosqlite>=0.19",
+  "uvloop>=0.19;os_name != 'nt'",     # skipped automatically on Windows
+  "typing_extensions>=4.11"
+]
+
+# ───────── optional dev-tool stack ─────────
+[project.optional-dependencies]
+dev = [
+  "grpcio-tools>=1.63",      # `python -m grpc_tools.protoc ...`
+  "pytest>=8.2",
+  "pytest-asyncio>=0.23",
+  "ruff>=0.4",
+  "mypy>=1.10",
+  "pre-commit>=3.7"
+]
+
+[tool.hatch.build.targets.wheel]
+# Include these extra files in the built wheel so users can regen protobuf stubs
+# or inspect example scripts.
+packages = ["mpmq"]
+include  = ["proto/**", "scripts/**"]
